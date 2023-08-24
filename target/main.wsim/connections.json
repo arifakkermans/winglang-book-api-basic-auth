@@ -1,0 +1,40 @@
+{
+  "version": "connections-0.1",
+  "connections": [
+    {
+      "source": "root/Default/cloud.Api/OnRequestHandler-bf0e8f58",
+      "target": "root/Default/BasicAuth",
+      "name": "authCredentials()"
+    },
+    {
+      "source": "root/Default/cloud.Api/OnRequestHandler-bf0e8f58",
+      "target": "root/Default/BasicAuth",
+      "name": "authHeaderPresent()"
+    },
+    {
+      "source": "root/Default/cloud.Api/OnRequestHandler-bf0e8f58",
+      "target": "root/Default/BasicAuth",
+      "name": "$inflight_init()"
+    },
+    {
+      "source": "root/Default/cloud.Api/OnRequestHandler-bf0e8f58",
+      "target": "root/Default/BasicAuth",
+      "name": "authHeader()"
+    },
+    {
+      "source": "root/Default/cloud.Api/OnRequestHandler-bf0e8f58",
+      "target": "root/Default/BasicAuth",
+      "name": "call()"
+    },
+    {
+      "source": "root/Default/cloud.Api",
+      "target": "root/Default/cloud.Api/OnRequestHandler-bf0e8f58",
+      "name": "get()"
+    },
+    {
+      "source": "root/Default/cloud.Api",
+      "target": "root/Default/cloud.Api/OnRequestHandler-15ce2678",
+      "name": "get()"
+    }
+  ]
+}

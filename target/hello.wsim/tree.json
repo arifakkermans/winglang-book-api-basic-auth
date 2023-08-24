@@ -1,0 +1,120 @@
+{
+  "version": "tree-0.1",
+  "tree": {
+    "id": "root",
+    "path": "root",
+    "children": {
+      "cloud.TestRunner": {
+        "id": "cloud.TestRunner",
+        "path": "root/cloud.TestRunner",
+        "constructInfo": {
+          "fqn": "@winglang/sdk.std.TestRunner",
+          "version": "0.0.0"
+        },
+        "display": {
+          "title": "TestRunner",
+          "description": "A suite of APIs for running tests and collecting results.",
+          "hidden": true
+        }
+      },
+      "Default": {
+        "id": "Default",
+        "path": "root/Default",
+        "children": {
+          "cloud.Bucket": {
+            "id": "cloud.Bucket",
+            "path": "root/Default/cloud.Bucket",
+            "constructInfo": {
+              "fqn": "@winglang/sdk.cloud.Bucket",
+              "version": "0.0.0"
+            },
+            "display": {
+              "title": "Bucket",
+              "description": "A cloud object store"
+            }
+          },
+          "cloud.Counter": {
+            "id": "cloud.Counter",
+            "path": "root/Default/cloud.Counter",
+            "constructInfo": {
+              "fqn": "@winglang/sdk.cloud.Counter",
+              "version": "0.0.0"
+            },
+            "display": {
+              "title": "Counter",
+              "description": "A distributed atomic counter"
+            }
+          },
+          "cloud.Queue": {
+            "id": "cloud.Queue",
+            "path": "root/Default/cloud.Queue",
+            "children": {
+              "cloud.Queue-SetConsumerHandler-bf0e8f58": {
+                "id": "cloud.Queue-SetConsumerHandler-bf0e8f58",
+                "path": "root/Default/cloud.Queue/cloud.Queue-SetConsumerHandler-bf0e8f58",
+                "constructInfo": {
+                  "fqn": "@winglang/sdk.std.Resource",
+                  "version": "0.0.0"
+                },
+                "display": {
+                  "hidden": true
+                }
+              },
+              "cloud.Queue-SetConsumer-bf0e8f58": {
+                "id": "cloud.Queue-SetConsumer-bf0e8f58",
+                "path": "root/Default/cloud.Queue/cloud.Queue-SetConsumer-bf0e8f58",
+                "constructInfo": {
+                  "fqn": "@winglang/sdk.cloud.Function",
+                  "version": "0.0.0"
+                },
+                "display": {
+                  "title": "setConsumer()",
+                  "description": "A cloud function (FaaS)",
+                  "sourceModule": "@winglang/sdk"
+                }
+              },
+              "cloud.Queue-QueueEventMapping-bf0e8f58": {
+                "id": "cloud.Queue-QueueEventMapping-bf0e8f58",
+                "path": "root/Default/cloud.Queue/cloud.Queue-QueueEventMapping-bf0e8f58",
+                "constructInfo": {
+                  "fqn": "@winglang/sdk.std.Resource",
+                  "version": "0.0.0"
+                },
+                "display": {
+                  "hidden": true
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "@winglang/sdk.cloud.Queue",
+              "version": "0.0.0"
+            },
+            "display": {
+              "title": "Queue",
+              "description": "A distributed message queue"
+            }
+          },
+          "$Closure1": {
+            "id": "$Closure1",
+            "path": "root/Default/$Closure1",
+            "constructInfo": {
+              "fqn": "@winglang/sdk.std.Resource",
+              "version": "0.0.0"
+            },
+            "display": {
+              "hidden": true
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "@winglang/sdk.std.Resource",
+          "version": "0.0.0"
+        }
+      }
+    },
+    "constructInfo": {
+      "fqn": "@winglang/sdk.core.App",
+      "version": "0.0.0"
+    }
+  }
+}
