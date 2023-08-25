@@ -1,17 +1,32 @@
 bring cloud;
 bring util;
 bring http;
+bring ex;
 
 class Utils {
   extern "./utils.js" static inflight base64decode(value: str): str;
   extern "./utils.js" static inflight base64encode(value: str): str;
-  extern "./utils.js" static inflight getBooks(): str;
-  extern "./utils.js" static inflight getISBNFromPath(path : str): str;
-  extern "./utils.js" static inflight bookExists(isbn : str): bool;
-  extern "./utils.js" static inflight getBookByISBN(isbn : str): str;
 
   init() { }
 }
+
+// our books database
+let db = new ex.Table(
+  name: "books",
+  primaryKey: "isbn",
+  columns: {
+    "isbn" => ex.ColumnType.STRING,
+    "title" => ex.ColumnType.STRING,
+    "subtitle" => ex.ColumnType.STRING,
+    "author" => ex.ColumnType.STRING,
+    "published" => ex.ColumnType.STRING,
+    "publisher" => ex.ColumnType.STRING,
+    "pages" => ex.ColumnType.NUMBER,
+    "description" => ex.ColumnType.STRING,
+    "website" => ex.ColumnType.STRING,
+  }
+);
+
 
 struct Credentials {
   username: str;
@@ -82,10 +97,16 @@ class BasicAuth {
 let auth = new BasicAuth();
 let api = new cloud.Api();
 
+api.get("/books", inflight (request: cloud.ApiRequest): cloud.ApiResponse => {
 
-api.get("/books", inflight (req) => {
-  let authenticated = auth.call(req);
+  let result = MutJson [];
+  let var i = 0;
+  for book in db.list() {
+    result.setAt(i, book);
+    i = i + 1;
+  }
 
+  let authenticated = auth.call(request);
   if (!authenticated) {
     return {
       status: 401,
@@ -96,38 +117,105 @@ api.get("/books", inflight (req) => {
     };
   }
 
-  return {
+  return cloud.ApiResponse {
     status: 200,
-    headers: {
-      "Content-Type" => "text/plain"
-    },
-    body: Utils.getBooks()
+    body: Json.stringify(result)
   };
 });
 
-api.get("/books/{isbn}", inflight (req: cloud.ApiRequest): cloud.ApiResponse => {
-  if (Utils.bookExists(Utils.getISBNFromPath(req.path))){
-    return cloud.ApiResponse {
-        status: 201,
-        body: Utils.getBookByISBN(Utils.getISBNFromPath(req.path))
+api.get("/books/{isbn}", inflight (request: cloud.ApiRequest): cloud.ApiResponse => {
+  let book = db.get(request.vars.get("isbn"));
+
+  let authenticated = auth.call(request);
+  if (!authenticated) {
+    return {
+      status: 401,
+      headers: {
+        "Content-Type" => "text/plain"
+      },
+      body: "Unauthorized"
     };
   }
-  else {
-    return cloud.ApiResponse {
-        status: 201,
-        body: "Book not found"
+
+  return cloud.ApiResponse {
+    status: 200,
+    body: Json.stringify(book)
+  };
+});
+
+api.post("/books", inflight (request: cloud.ApiRequest): cloud.ApiResponse => {
+  let authenticated = auth.call(request);
+  if (!authenticated) {
+    return {
+      status: 401,
+      headers: {
+        "Content-Type" => "text/plain"
+      },
+      body: "Unauthorized"
     };
   }
+
+  if let body = request.body {
+    let bookData = Json.parse(body);
+    let isbn = bookData.get("isbn");
+    db.insert(str.fromJson(isbn), bookData);
+    return cloud.ApiResponse {
+      status: 201,
+      body: str.fromJson(isbn)
+    };
+   }
+});
+
+api.put("/books/{isbn}", inflight (request: cloud.ApiRequest): cloud.ApiResponse => {
+  let authenticated = auth.call(request);
+  if (!authenticated) {
+    return {
+      status: 401,
+      headers: {
+        "Content-Type" => "text/plain"
+      },
+      body: "Unauthorized"
+    };
+  }
+
+  if let body = request.body {
+    let bookData = Json.parse(body);
+    let isbn = request.vars.get("isbn");
+    db.update(isbn, bookData);
+    return cloud.ApiResponse {
+      status: 200,
+      body: Json.stringify(bookData)
+    };
+  }
+});
+
+api.delete("/books/{isbn}", inflight (request: cloud.ApiRequest): cloud.ApiResponse => {
+  let authenticated = auth.call(request);
+  if (!authenticated) {
+    return {
+      status: 401,
+      headers: {
+        "Content-Type" => "text/plain"
+      },
+      body: "Unauthorized"
+    };
+  }
+
+  let id = request.vars.get("isbn");
+  db.delete(id);
+  return cloud.ApiResponse {
+    status: 204
+  };
 });
 
 let apiUrl = api.url;
 
-test "not authenticated" {
+test "Not authenticated" {
   let response = http.get("${apiUrl}/books");
   assert(response.status == 401);
 }
 
-test "authenticated" {
+test "Authenticated" {
   let response = http.get("${apiUrl}/books", {
     headers: {
       Accept: "application/json",
@@ -136,4 +224,27 @@ test "authenticated" {
   });
 
   assert(response.status == 200);
+}
+
+test "Post book" {
+  let response = http.post("${apiUrl}/books", {
+    headers: {
+      Accept: "application/json",
+      Authorization: "Basic " + Utils.base64encode("admin:admin")
+    },
+    body: Json.stringify(  {
+      "isbn":"9781593279509",
+      "title":"Eloquent JavaScript, Third Edition",
+      "subtitle":"A Modern Introduction to Programming",
+      "author":"Marijn Haverbeke",
+      "published":"2018-12-04T00:00:00.000Z",
+      "publisher":"No Starch Press",
+      "pages":472,
+      "description":"JavaScript lies at the heart of almost every modern web application, from social apps like Twitter to browser-based game frameworks like Phaser and Babylon. Though simple for beginners to pick up and play with, JavaScript is a flexible, complex language that you can use to build full-scale applications.",
+      "website":"http://eloquentjavascript.net/"
+  })
+  });
+
+  assert(response.body == "9781593279509");
+  assert(response.status == 201);
 }
