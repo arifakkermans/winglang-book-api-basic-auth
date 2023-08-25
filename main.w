@@ -208,15 +208,13 @@ api.delete("/books/{isbn}", inflight (request: cloud.ApiRequest): cloud.ApiRespo
   };
 });
 
-let apiUrl = api.url;
-
 test "Not authenticated" {
-  let response = http.get("${apiUrl}/books");
+  let response = http.get("${api.url}/books");
   assert(response.status == 401);
 }
 
 test "Authenticated" {
-  let response = http.get("${apiUrl}/books", {
+  let response = http.get("${api.url}/books", {
     headers: {
       Accept: "application/json",
       Authorization: "Basic " + Utils.base64encode("admin:admin")
@@ -227,7 +225,7 @@ test "Authenticated" {
 }
 
 test "Post book" {
-  let response = http.post("${apiUrl}/books", {
+  let response = http.post("${api.url}/books", {
     headers: {
       Accept: "application/json",
       Authorization: "Basic " + Utils.base64encode("admin:admin")
